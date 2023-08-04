@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>吃点啥呀</title>
+		<style type="text/css">
+				*{
+					margin:0;
+					padding:0;
+					box-sizing: border-box;
+				}
+				.canvas_box{
+					position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;
+					overflow: hidden;
+					z-index: 1;
+				}
+				.canvas_box .can{
+					position:absolute;
+					left: 50%;
+					top: 50%;
+				}
+				#canvas_bg{
+					position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;
+				}
+				.canvas_ani{
+					animation: loading 90s linear 0s infinite;
+				}
+				@keyframes loading{
+					0%{
+						transform: rotate(0deg);
+					}
+					50%{
+						transform: rotate(180deg);
+					}
+					100%{
+						transform: rotate(360deg);
+					}
+				}
+				img{display:none;}
+				#pointer{
+					position: absolute;
+					left: 50%;
+					top: 50%;
+					display: block;
+					width: 64px;
+					height: 100px;
+					margin: -113px 0 0 -32px;
+				}
+				#pointer_but{
+					position: absolute;
+					left: 50%;
+					top: 50%;
+					display: block;
+					width: 120px;
+					height: 120px;
+					margin: -60px 0 0 -60px;
+				}
+				
+				
+				h1 {
+					margin:0;
+					font-size:clamp(5rem,1vw,15rem);
+					display:flex;
+					color: #fff;
+				}
+				span {
+					--stagger:-200ms;
+					--delay:calc(var(--i) * var(--stagger,200ms));
+				}
+				span > span {
+					display:block;
+					animation:bounce 2000ms var(--delay,0ms) infinite;
+					transform-origin:center bottom;
+					z-index:1;
+				}
+				span:not(span > span)::after {
+					content:'';
+					display:block;
+					width:100%;
+					aspect-ratio:1;
+					background:hsl(var(--hue) 50% 45% / 0.1);
+					transform:translate3d(0,3.8em,0) scaleY(0.3) scaleX(0.8);
+					transform-origin:center top;
+					border-radius:100%;
+					filter:blur(0.08em);
+					animation:shadow 2000ms var(--delay,0ms) infinite;
+				}
+				@keyframes bounce {
+					0% {
+					transform:translate3d(0,0,0) rotateY(0deg) scaleY(1);
+					animation-timing-function:ease-in;
+				}
+				45% {
+					transform:translate3d(0,2em,0) rotateY(180deg) scaleY(1);
+					animation-timing-function:ease-in;
+				}
+				50% {
+					transform:translate3d(0,2em,0) rotateY(180deg) scaleY(0.2);
+					animation-timing-function:ease-out,ease-out,linear;
+				}
+				100% {
+					transform:translate3d(0,0,0) rotateY(0) scaleY(1);
+					animation-timing-function:ease-out;
+				}
+				}@keyframes shadow {
+					0% {
+					transform:translate3d(0,1.8em,0) scale3d(1.5,0.3,1);
+					opacity:0;
+					animation-timing-function:ease-in;
+				}
+				45% {
+					transform:translate3d(0,1.8em,0) scale3d(0.8,0.2,1);
+					opacity:1;
+					animation-timing-function:ease-in;
+				}
+				50% {
+					transform:translate3d(0,1.8em,0) scale3d(0.8,0.2,1);
+					opacity:1;
+					animation-timing-function:linear;
+				}
+				100% {
+					transform:translate3d(0,1.8em,0) scale3d(1.5,0.3,1);
+					opacity:0;
+					animation-timing-function:ease-out;
+				}
+				}
+				
+				/* ******************mask**************** */
+				.table-bordered {
+					border-width:1px;
+					border-style:solid;
+					border-color:rgb(221,221,221);
+					border-image:initial;
+				}
+				table {
+					max-width:100%;
+					background-color:transparent;
+					border-collapse:collapse;
+					border-spacing:0px;
+					text-indent:initial;
+				}
+				tbody {
+					display:table-row-group;
+					vertical-align:middle;
+					border-color:inherit;
+				}
+				.text-danger {
+					color:#000;
+					font-size:18px;
+				}
+				tr {
+					display:table-row;
+					vertical-align:inherit;
+					border-color:inherit;
+				}
+				.table-bordered > thead > tr > th,.table-bordered > tbody > tr > th,.table-bordered > tfoot > tr > th,.table-bordered > thead > tr > td,.table-bordered > tbody > tr > td,.table-bordered > tfoot > tr > td {
+					border-width:1px;
+					border-style:solid;
+					border-color:rgb(221,221,221);
+					border-image:initial;
+				}
+				.table > thead > tr > th,.table > tbody > tr > th,.table > tfoot > tr > th,.table > thead > tr > td,.table > tbody > tr > td,.table > tfoot > tr > td {
+					line-height:20px;
+					vertical-align:top;
+					padding:8px;
+				}
+				.text-center {
+					text-align:center;
+				}
+				td {
+					display:table-cell;
+					vertical-align:inherit;
+					width:146px;
+				}
+				.btn-sm {
+					font-size:12px;
+					border-radius:3px;
+					height:20px;
+					line-height:20px;
+				}
+				.btn-primary {
+					color:rgb(255,255,255);
+					background-color:rgb(66,139,202);
+					border-color:rgb(53,126,189);
+				}
+				.btn {
+					display:inline-block;
+					margin-bottom:0px;
+					font-size:14px;
+					font-weight:normal;
+					line-height:20px;
+					text-align:center;
+					white-space:nowrap;
+					vertical-align:middle;
+					cursor:pointer;
+					background-image:none;
+					user-select:none;
+					padding:6px 12px;
+					border-width:1px;
+					border-style:solid;
+					border-color:transparent;
+					border-image:initial;
+					border-radius:4px;
+				}
+				.btn-danger {
+					color:rgb(255,255,255);
+					background-color:rgb(217,83,79);
+					border-color:rgb(212,63,58);
+				}
+				.form-control {
+					display:block;
+					width:100%px;
+					height:24px;
+					padding:3px 2px;
+					font-size:14px;
+					line-height:24px;
+					color:#333;
+					vertical-align:middle;
+					background-color:#fff;
+					background-image:none;
+					border:1px solid #ccc;
+					border-radius:4px;
+					-webkit-box-shadow:inset 0 1px 1px rgb(0 0 0 / 8%);
+					box-shadow:inset 0 1px 1px rgb(0 0 0 / 8%);
+					-webkit-transition:border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+					transition:border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+				}
+				.sel_mask {
+					width:36px;
+					height:28px;
+					border-radius:5px;
+					box-shadow:1px 1px 5px  rgb(66,139,202);
+					text-decoration:none;
+				}
+				/* ******************mask**************** */
+				
+				
+				.dialog-content{
+					position: fixed;
+					width: 100vw;
+					height: 100vh;
+					left: 0;
+					bottom: 0;
+					z-index: 9999;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+				}
+			</style>
+		
+		<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+		<script src="https://unpkg.com/http-vue-loader"></script>
+	</head>
+	<body>
+		<div id="app">
+			<div v-if="maskFlag" style="width: 100vw; height: 100vh; background:lavender;z-index: 99;position: absolute;padding: 40px;" >
+				 <table class="table table-bordered table-hover" style="width: 100%;height: 100px;">
+				        <!-- <caption>&nbsp;</caption> -->
+				    <tbody>
+								<tr class="text-danger" v-for="(item, index) in prizeVal" :key="index" style="height: 100px;">
+									<th class="text-center" style="font-size: 40px;height: 100%;">
+										<div style="display: flex;align-items: center;height: 100%;">
+											<input style="font-size: 40px;" v-model="item.text" />
+											<div @click="handle(index)" style="font-size: 60px;margin-left: 20px;">×</div>
+										</div>
+										
+									</th>
+								</tr>
+									<!-- <tr class="text-danger">
+				            <th class="text-center"></th>
+				        </tr>
+				        <tr class="text-center">
+				            <td>参数名</td>
+				            <td></td>
+				        </tr>
+				        <tr>
+				            <td colspan="2" class="text-right">
+				                <span class="btn btn-primary btn-sm" onclick="addRow()">+</span>
+				
+				            </td>
+				        </tr> -->
+				    </tbody>
+					</table>
+					
+					<div style="display: flex;align-items: center;justify-content: space-around;padding: 20px;">
+						<div style="
+							font-size: 60px;
+							background-color: #778beb;
+							border-radius: 20px;
+							font-size: 40px;
+							padding: 10px 30px;
+							color: #fff;
+							"
+							@click="add"
+						>添加</div>
+						<div style="
+							font-size: 60px;
+							background-color: #63cdda;
+							border-radius: 20px;
+							font-size: 40px;
+							padding: 10px 30px;
+							color: #fff;
+							"
+							@click="goSubmit"
+						>确定</div>
+						<!-- <span @click="add" style="font-size: 60px;">添加</span> -->
+						<!-- <span @click="goSubmit" style="font-size: 60px;">确定</span> -->
+					</div>
+					
+					<div style="position: fixed;width: 100%;bottom: 90px;left: 20px;font-size: 40px;">
+						<div>隐藏设置。联系微信:yamu2035</div>
+						<div>@竹笛</div>
+					</div>
+			</div>
+			<div v-else-if="!maskFlag" style="width: 100vw; height: 100vh; background: #a29bfe;">
+				<div style="width: 100%; display: flex;justify-content: center;">
+					<h1 aria-label="bouncing">
+					    <span style="--i: 0" aria-hidden="true"><span>今</span></span>
+					    <span style="--i: 1" aria-hidden="true"><span>天</span></span>
+					    <span style="--i: 2" aria-hidden="true"><span>吃</span></span>
+					    <span style="--i: 3" aria-hidden="true"><span>啥 </span></span>
+					    <span style="--i: 3" aria-hidden="true"><span>好</span></span>
+					    <span style="--i: 4" aria-hidden="true"><span>呢</span></span>
+					</h1>
+				</div>
+				<div class="canvas_box">
+					<div class="can">
+						<canvas id="canvas_bg"></canvas>
+						<canvas id="canvas_main" class="canvas_ani"></canvas>
+					</div>
+					<img src="img/img12.png" id='pointer' />
+					<img src="img/img13.png" id='pointer_but' @click="go"/>
+					
+					<div v-if="dialogFlag" style="position: absolute;width: 100%;height: 100%;background: rgb(162, 155, 254);display: flex;align-items: center;justify-content: center;">
+						<div>
+							<div style="font-size: 40px;width: 100%;height: 80px;">
+							<label style="color: #fff; font-size: 60px;">{{showText}}</label></div>
+							<div style="width: 100%;height: 60px;display: flex;align-items: center;justify-content: center;margin-top: 40px;">
+								<label style="font-size: 60px;
+							background-color: #1d7dfa;
+							border-radius: 20px;
+							font-size: 40px;
+							padding: 10px 40px;
+							color: #fff;" @click="dialogFlag=false">确定</label>
+							</div>
+						</div>
+					</div>
+					
+					<div style="position: fixed; bottom: 80px;right: 20px;">
+						<div style="
+							font-size: 60px;
+							background-color: #1d7dfa;
+							border-radius: 20px;
+							font-size: 40px;
+							padding: 10px;
+							color: #fff;
+							"
+							@click="maskFlag=true"
+						>自定义</div>
+					</div>
+				</div>
+				<img src="img/h_03.png" id='img1' />
+				<img src="img/h_05.png" id='img2' />
+				<img src="img/h_07.png" id='img3' />
+				<img src="img/h_10.png" id='img4' />
+				
+			</div>
+		</div>
+	</body>
+	<script src="js/jquery-1.12.4.min.js"></script>
+	<script src="js/jQueryRotate.js"></script>
+
+	
+	<script>
+		new Vue({
+			el: '#app',
+			// components: { 
+			// 	Dialog: httpVueLoader('./component/Dialog.js')
+			// },
+			data() {
+				return {
+					dialogFlag: false,
+					showText: '',
+					canvasbg: null,
+					contextbg: null,
+					canvas: null,
+					context: null,
+					wid: 0,
+					canvasArr: {
+						'width': 0, //转盘宽度
+						'height': 0, //转盘高度
+						'bgcolor':'#5a9cff', //背景颜色
+						'border': 0, //转盘边框
+						'lightnum':24, //背景灯个数
+						'lightwid': 0 //背景灯大小
+					},
+					prizeVal: [
+						{
+							img:'img1', //对应图片
+							text:'生煎汤包', //奖品名称 , 换行
+						},
+						{
+							img:'img2',
+							text:'面'
+						},
+						{
+							img:'img3',
+							text:'汉堡'
+						},
+						{
+							img:'img4',
+							text:'火锅'
+						},
+						{
+							img:'img4',
+							text:'炒饭'
+						},
+						{
+							img:'img1',
+							text:'炒菜'
+						},
+						{
+							img:'img2',
+							text:'粥'
+						},
+						{
+							img:'img3',
+							text:'不吃，减肥'
+						}
+					],
+					angleVal: 0,
+					cavvasAni: null,
+					prizeNum: 4,
+					
+					// 开始抽奖
+					rotateType: true,
+					maskFlag: false
+				}
+			},
+			
+			created() {
+				if (window.localStorage.getItem('arr')) {
+					this.prizeVal = JSON.parse(window.localStorage.getItem('arr'))
+				}
+			},
+			mounted() {
+				this.init()
+			},
+			
+			methods: {
+				init() {
+					this.wid = parseInt($('body').width()*0.9)
+					$('.canvas_box').width(this.wid).height(this.wid)
+					
+					// this.wid = this.wid*4
+					
+					$('.can').width(this.wid).height(this.wid)
+					
+					// this.cavvasAni = setInterval(function(){
+					// 	this.angleVal++
+					// 	if(this.angleVal == 360){
+					// 		this.angleVal=0
+					// 	}
+					// },3000)
+					
+					this.prizeVal = this.prizeVal.map(item => {
+						return {
+							...item,
+							wid: this.wid * 0.1,
+							hei: this.wid * 0.1
+						}
+					})
+					
+					
+					
+					this.canvasArr.width = this.wid
+					this.canvasArr.height = this.wid
+					this.canvasArr.border = this.wid * 0.06
+					this.canvasArr.lightwid = this.wid*0.036
+					
+					this.canvasbg = document.getElementsByTagName('canvas')[0];
+					
+					console.log('111111111111111111')
+					console.dir(document.getElementsByTagName('canvas'))
+					
+					this.contextbg = this.canvasbg.getContext('2d'); 
+					this.canvas = document.getElementsByTagName('canvas')[1];
+					this.context = this.canvas.getContext('2d');
+					
+					
+					this.canvasbg.width = this.canvasArr.width
+					this.canvasbg.height = this.canvasArr.height
+					this.canvas.width = this.canvasArr.width
+					this.canvas.height = this.canvasArr.height
+					
+					
+					this.bgfun()
+					this.bglight()
+					this.prize()
+					this.iconfun()
+					this.bglight('#FFFFFF','#ffcf4d')
+					this.bglightani() //背景灯动态
+					// $('.can').css('transform', 'scale(0.25)');
+					$('.can').css('margin-left',-this.wid/2)
+					$('.can').css('margin-top',-this.wid/2)
+					
+					this.$forceUpdate()
+				},
+				//背景
+				bgfun(){
+					this.contextbg.beginPath()
+					let clg = this.contextbg.createLinearGradient(0,0,0, this.canvasArr.height);
+					clg.addColorStop(0,'#fed149')
+					clg.addColorStop(1,'#ff7d05')
+					
+					this.contextbg.fillStyle = clg;
+					//this.contextbg.fillStyle = canvasArr.bgcolor
+					this.contextbg.arc(this.canvasArr.width/2, this.canvasArr.height/2, this.canvasArr.width/2,0,Math.PI*2);
+					this.contextbg.closePath();
+					this.contextbg.fill();
+					
+					this.contextbg.beginPath()
+					this.contextbg.fillStyle = '#FFFFFF'
+					this.contextbg.arc(this.canvasArr.width/2, this.canvasArr.height/2, this.canvasArr.width/2 - this.canvasArr.border,0,Math.PI*2);
+					this.contextbg.closePath();
+					this.contextbg.fill();
+				},
+				
+				//周边背景灯
+				bglight(cor1,cor2){
+					for(let i=0;i<this.canvasArr.lightnum;i++){
+						if(i%2 == 0){
+							this.contextbg.fillStyle=cor1;
+						}else{
+							this.contextbg.fillStyle=cor2;
+						}
+						this.contextbg.beginPath()
+						this.contextbg.arc(this.canvasArr.width/2+(this.canvasArr.width/2 - this.canvasArr.border/2)*Math.cos(360/this.canvasArr.lightnum*i*Math.PI/180),this.canvasArr.width/2+(this.canvasArr.width/2 - this.canvasArr.border/2)*Math.sin(360/this.canvasArr.lightnum*i*Math.PI/180),this.canvasArr.lightwid/2,0,Math.PI*2);
+						this.contextbg.closePath();
+						this.contextbg.fill();
+					}
+				},
+				//扇形
+				prize(){
+					var colorArr = ["#fff8f4", "#ffe4d6", "#f8a5c2"]
+					
+					var tmpColor = []
+					for(let i=0;i<this.prizeVal.length;i++){
+						tmpColor.push(colorArr[i % 3])
+					}
+					if(tmpColor[tmpColor.length - 1] === tmpColor[0]) {
+						tmpColor[tmpColor.length - 1] =tmpColor[1]
+					}
+					for(let i=0;i<this.prizeVal.length;i++){
+						this.context.beginPath()
+
+						this.context.fillStyle=tmpColor[i];
+						
+						
+						this.context.moveTo(this.canvasArr.width/2,this.canvasArr.height/2);
+						this.context.arc(this.canvasArr.width/2, this.canvasArr.height/2, this.canvasArr.width/2 - this.canvasArr.border,2*Math.PI/this.prizeVal.length*i-0.5*Math.PI-Math.PI/this.prizeVal.length,2*Math.PI/this.prizeVal.length*(i+1)-0.5*Math.PI-Math.PI/this.prizeVal.length);
+						this.context.closePath();
+						this.context.fill();
+					}
+				},
+				
+				//画图icon文字
+				iconfun(){
+					let step = 2*Math.PI/this.prizeVal.length
+					for(let i=0;i<this.prizeVal.length;i++){
+						//icon
+						this.context.save()
+						this.context.translate(this.canvasArr.width/2,this.canvasArr.height/2);
+						this.context.rotate(step*(i))
+						let img = new Image;
+						img.src = $('#' + this.prizeVal[i].img).attr('src');
+						this.context.drawImage(img,-this.prizeVal[i].wid/2,-this.canvasArr.height/2.4,this.prizeVal[i].wid,this.prizeVal[i].hei);
+						//文字
+						let textval = this.prizeVal[i].text.split(',')
+						for(let j=0;j<textval.length;j++){
+							this.context.beginPath()
+							this.context.font = "bold 30px Microsoft YaHei";
+							this.context.textAlign = "center";
+							this.context.fillStyle="#722207";
+							this.context.fillText(textval[j], 0, -this.canvasArr.height / 3.9 + 64*j);
+						}
+						this.context.restore()
+					}
+				},
+				
+				//周边背景灯动态
+				bglightani(){
+					let that = this;
+					let i=0;
+					setInterval(function(){
+						i++;
+						if(i%2 == 0){
+							that.bglight('#FFFFFF','#ffcf4d')
+						} else {
+							that.bglight('#ffcf4d','#FFFFFF')
+						}
+					},600)
+				},
+				
+				go() {
+					// debugger
+					let minimum = 0
+					let maximum = this.prizeVal.length
+					// let num = Math.floor(Math.random() * (maximum – minimum + 1)) + minimum
+					let num = Math.floor(Math.random()*maximum)
+					if(this.rotateType == false){return false}
+					$('#canvas_main').removeClass('canvas_ani')
+					this.rotateType = false
+					$('#canvas_main').rotate({
+						duration:3000,               //转动时间
+						angle: this.angleVal,                    //起始角度
+						animateTo:1800-num*360/this.prizeVal.length,      //结束的角度
+						easing: $.easing.easeOutSine//动画效果，需加载jquery.easing.min.js
+	
+					});
+					
+					setTimeout(() => {
+						// alert(this.prizeVal[num].text);//简单的弹出获奖信息
+						// console.log('777777777777777')
+						this.showText = '今天就吃' + this.prizeVal[num].text + '吧'
+						this.dialogFlag = true
+						this.rotateType = true
+					}, 3000)
+				},
+				
+				add() {
+					this.prizeVal.push({
+						img: 'img' + parseInt(this.prizeVal.length % 3 + 1),
+						text:'',
+						wid: this.wid * 0.1,
+						hei: this.wid * 0.1
+					})
+					
+				},
+ 				handle(sel) {
+					this.prizeVal.splice(sel, 1)
+					this.init()
+				},
+				goSubmit() {
+					this.prizeVal = this.prizeVal.filter(item => item.text)
+					window.localStorage.setItem('arr', JSON.stringify(this.prizeVal))
+					this.maskFlag = false
+					this.$nextTick(() => {
+						this.init()
+					})	
+				}
+			}
+		})
+	</script>
+</html>
